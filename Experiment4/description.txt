@@ -1,0 +1,1 @@
+Using twice the delay (30ms instead of 15)

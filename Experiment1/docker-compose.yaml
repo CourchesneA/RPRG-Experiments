@@ -1,0 +1,108 @@
+version: '3'
+services:
+    solution:
+        image: "courchesnea/jerome:fixed2"
+        volumes:
+            - fifos:/fifos
+        networks: &networks
+          - duckietown-docker-net
+        environment:
+            AIDONODE_DATA_IN: /fifos/ego0-in
+            AIDO_REQUIRE_GPU: '1'
+            AIDONODE_DATA_OUT: fifo:/fifos/ego0-out
+    evaluator:
+        # image: docker.io/duckietown/challenge-aido_lf-experiment_manager@sha256:48f0b2f34825d15848c3060740ab95a99254d233959586b75aeedf03f1ed5832
+        image: docker.io/duckietown/challenge-aido_lf-experiment_manager:daffy-amd64
+        # image: courchesnea/challenge-aido_lf-experiment_manager
+        networks: *networks
+        volumes:
+          - type: bind
+            source: ${PWD}/challenges
+            target: /challenges
+          - type: bind
+            source: ${PWD}/scenarios
+            target: /scenarios
+          - fifos:/fifos
+        environment:
+            submitter_name: "local_experiments"
+            submission_id: 00000
+            challenge_name: "LF-full-loop"
+            experiment_manager_parameters: 'episodes_per_scenario: 5
+
+                episode_length_s: 20.0
+
+                min_episode_length_s: 0.0
+
+                seed: 20200922
+
+                physics_dt: 0.05
+
+                max_failures: 2
+
+                fifo_dir: /fifos
+
+                sim_in: /fifos/simulator-in
+
+                sim_out: /fifos/simulator-out
+
+                sm_in: /fifos/scenario_maker-in
+
+                sm_out: /fifos/scenario_maker-out
+
+                timeout_initialization: 120
+
+                timeout_regular: 120
+
+
+                port: 10123 # visualization port
+
+                scenarios:
+
+                - /scenarios
+
+
+                '
+        ports:
+        - '10123'
+    simulator:
+        # image: docker.io/duckietown/challenge-aido_lf-simulator-gym@sha256:953ba9f1437e3f267db1f4ff2e58340de33f6c207283f26def16fc8612b9506e
+        image: docker.io/duckietown/challenge-aido_lf-simulator-gym:daffy-amd64
+        # image: courchesnea/challenge-aido_lf-simulator-gym
+        networks: *networks
+        volumes:
+          - fifos:/fifos
+        environment:
+            AIDONODE_CONFIG: "env_constructor: Simulator\nenv_parameters:\n  max_steps:\
+                \ 500001 # we don't want the gym to reset itself\n  domain_rand: 0\n\
+                \  camera_width: 640\n  camera_height: 480\n  distortion: true\n \
+                \ num_tris_distractors: 0\n  color_ground: [0, 0.3, 0] # green\n \
+                \ enable_leds: true\n"
+            AIDONODE_DATA_IN: /fifos/simulator-in
+            AIDONODE_DATA_OUT: fifo:/fifos/simulator-out
+    scenario_maker:
+        # image: docker.io/duckietown/challenge-aido_lf-scenario_maker@sha256:1562e17ba46090cdedbe68b8584827f1b3730f2786f6abd52e8790b4f0f1e63c
+        image: docker.io/duckietown/challenge-aido_lf-scenario_maker:daffy-amd64
+        # image: courchesnea/challenge-aido_lf-scenario_maker
+        networks: *networks
+        volumes:
+          - fifos:/fifos
+        environment:
+            AIDONODE_CONFIG: 'maps:
+
+                - ETHZ_autolab_technical_track
+
+                scenarios_per_map: 4
+
+                robots_npcs: []
+
+                robots_pcs: [ego]
+
+                '
+            AIDONODE_DATA_IN: /fifos/scenario_maker-in
+            AIDONODE_DATA_OUT: fifo:/fifos/scenario_maker-out
+
+volumes:
+  fifos:
+
+networks:
+  duckietown-docker-net:

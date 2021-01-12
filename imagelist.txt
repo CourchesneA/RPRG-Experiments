@@ -1,0 +1,16 @@
+courchesnea/fhebert            x123456
+courchesnea/ayman:fixed2       x123456
+courchesnea/mokleit:fixed2     x123456
+courchesnea/yishu:fixed2       x123456
+courchesnea/daniil:fixed2      x123456
+courchesnea/himanshu:fixed2    x123456
+courchesnea/raphael:fixed2     x123456  
+courchesnea/etienne:fixed2     x123456
+courchesnea/fernanda:fixed2    x123456
+courchesnea/js:fixed2          x123456
+courchesnea/phred:fixed2       x123456
+courchesnea/melisande:fixed2   x123456
+courchesnea/dishank:fixed2     x123456
+courchesnea/olga:fixed2        x123456
+courchesnea/bhavya:fixed2      x123456
+courchesnea/jerome:fixed2      x123456
